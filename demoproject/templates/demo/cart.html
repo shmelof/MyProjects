@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Корзина</h1>
+
+    {% if cart_items %}
+        <ul>
+            {% for item in cart_items %}
+                <li>
+                    {{ item.product.name }} - <span>{{ item.count }}</span>
+                    <button onclick="toCart(this, {{ item.product.pk }})">+</button>
+                    <button onclick="delete_from_cart(this, {{ item.product.pk }})">-</button>
+                </li>
+            {% endfor %}
+        </ul>
+        <div>
+            <input type="password" value="" name="password" placeholder="Введите ваш пароль">
+            <button id="by_order">Сформировать заказ</button>
+        </div>
+    {% else %}
+        <p>Корзина пуста</p>
+    {% endif %}
+
+    <script>
+        document.querySelector('#by_order').addEventListener('click', async (event) => {
+            const password = document.querySelector('input').value;
+            const res = await fetch(`checkout?password=${password}`).then(res => res.json());
+            if (res.error) {
+                const message = document.createElement('div');
+                message.innerHTML = res.error;
+                event.target.parentElement.append(message);
+                setTimeout(() => message.remove(), 1000);
+            }
+            else {
+                location.href = '/orders';
+            }
+        })
+
+        toCart = async (target, pk) => {
+                const res = await fetch(`/to_cart/${pk}`).then(res => res.json());
+
+                if (res.count) {
+                    target.parentElement.querySelector('span').innerHTML = res.count;
+                }
+                else {
+                    const message = document.createElement('div');
+                    message.innerHTML = res.error;
+                    target.parentElement.append(message);
+                    setTimeout(() => message.remove(), 1000);
+                }
+            }
+
+        delete_from_cart = async  (target, pk) => {
+            const res = await fetch(`/delete_from_cart/${pk}`).then(res => res.json());
+
+            if (res.count) {
+                target.parentElement.querySelector('span').innerHTML = res.count;
+            }
+
+            if (res.count === 0) {
+                target.parentElement.remove();
+            }
+        }
+    </script>
+{% endblock %}

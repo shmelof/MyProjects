@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Товар {{ item.name }}</h1>
+
+    <div>
+        <p><img src="{{ item.photo_file.url }}" alt="{{ item.photo_file }}" class="img-thumbnail" width="400"></p>
+        <p>Год производства: {{ item.year }}</p>
+        <p>Категория: {{ item.category }}</p>
+        <p>Остаток: {{ item.count }}</p>
+        <p>Цена: {{ item.price }} р.</p>
+    </div>
+{% endblock %}

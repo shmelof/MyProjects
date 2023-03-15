@@ -1,0 +1,1 @@
+snscrape --max-results 10 vkontakte-user !user! > vk-@!user!.txt
